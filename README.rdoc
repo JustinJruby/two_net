@@ -9,12 +9,12 @@ Add the gem to the gem file
 
 = Access
 Add the following env variables. 
-Command line
+Command line:
 export TWONET_URL='<Your 2net URL>'
 export TWONET_KEY='<Your 2net Key>'
 export TWONET_SECRET='<Your 2net Secret>'
 
-Application.rb
+Application.rb:
 ENV['TWONET_URL']='<Your 2net URL>'
 ENV['TWONET_KEY']='<Your 2net Key>'
 ENV['TWONET_SECRET']='<Your 2net Secret>'
@@ -35,3 +35,5 @@ Delete the guid
 
 TwoNet::Client.get_guids(guid)
 List all guids in the system
+
+
