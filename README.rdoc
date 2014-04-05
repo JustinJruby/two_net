@@ -40,4 +40,12 @@ List all guids in the system
 TwoNet::Client.list_all_sensors(guid)
 List all the sensors that a user can have
 
+TwoNet::Client.add_sensor(guid,properties)
+Add a sensor to a guid.
+returns track id
+properties of the form
+properties = {:name=>:make, :value=> make },
+        {:name=>:model, :value=>model},
+        {:name=>:serialNumber, :value=>identification},
+       {:name=>:qualifier, :value=>1}
 
