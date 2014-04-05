@@ -37,3 +37,7 @@ TwoNet::Client.get_guids(guid)
 List all guids in the system
 
 
+TwoNet::Client.list_all_sensors(guid)
+List all the sensors that a user can have
+
+
