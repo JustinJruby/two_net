@@ -2,50 +2,82 @@
 
 TwoNet Gem is to connect to the Qualcomm 2net health system.
 
-Information on 2net is at [http://www.qualcommlife.com/wireless-health], with developer infomation at [http://www.qualcommlife.com/2net-developer-tools]
+Information on 2net is at http://www.qualcommlife.com/wireless-health, with developer infomation at http://www.qualcommlife.com/2net-developer-tools
 
 = Installing
-Add the gem to the gem file
+Add the gem to the Gemfile
+  gem 'two_net'
 
 = Access
-	Add the following env variables. 
-	Command line:
-export TWONET_URL='<Your 2net URL>'
-export TWONET_KEY='<Your 2net Key>'
-export TWONET_SECRET='<Your 2net Secret>'
+Add the following environment variables. 
 
-	Application.rb:
-ENV['TWONET_URL']='<Your 2net URL>'
-ENV['TWONET_KEY']='<Your 2net Key>'
-ENV['TWONET_SECRET']='<Your 2net Secret>'
+Command line:
+  export TWONET_URL='<Your 2net URL>'
+  export TWONET_KEY='<Your 2net Key>'
+  export TWONET_SECRET='<Your 2net Secret>'
+
+Application.rb:
+  ENV['TWONET_URL']='<Your 2net URL>'
+  ENV['TWONET_KEY']='<Your 2net Key>'
+  ENV['TWONET_SECRET']='<Your 2net Secret>'
 
 = Usage
-
-TwoNet::Client.get_error
-	Display the last error
-
-TwoNet::Client.clear_error
-	Clear the last error
-
-TwoNet::Client.register_user(guid)
-	Register the guid
-
-TwoNet::Client.delete_user(guid)
-	Delete the guid
-
-TwoNet::Client.get_guids(guid)
-	List all guids in the system
+Sample of the commands in the library
 
 
-TwoNet::Client.list_all_sensors(guid)
-	List all the sensors that a user can have
+== Generate GUID
+ TwoNet::Client.generate_guid
+Generate a GUID
 
-TwoNet::Client.add_sensor(guid,properties)
-	Add a sensor to a guid.
-	returns track id
+==Get errors
+  TwoNet::Client.get_error
+Display the last error
+
+==Show last error
+  TwoNet::Client.clear_error
+Clear the last error
+
+== Register
+  TwoNet::Client.register_user(guid)
+Register the guid
+
+== Delete
+  TwoNet::Client.delete_user(guid)
+Delete the guid
+
+== List GUIDS
+  TwoNet::Client.get_guids(guid)
+List all guids in the system
+
+== List System Sensors
+  TwoNet::Client.list_all_sensors(guid)
+List all the sensors that a user can have
+
+== Add Sensors
+  TwoNet::Client.add_sensor(guid,properties)
+Add a sensor to a guid.
+
+Returns track id
 	properties of the form
-properties = {:name=>:make, :value=> make },
+
+      properties =
+        {:name=>:make, :value=> make },
         {:name=>:model, :value=>model},
         {:name=>:serialNumber, :value=>identification},
        {:name=>:qualifier, :value=>1}
 
+== Latest Data
+  TwoNet::Client.latest_reading(opts={})
+    guid = opts[:guid]
+    track_guid = opts[:track_guid]
+Show the latest data for the track
+
+
+== Latest Activity
+  TwoNet::latest_activity(opts={})
+    guid = opts[:guid]
+    track_guid = opts[:track_guid]
+    timezone = opts[:timezone]
+Show the latest data for the track
+
+=
