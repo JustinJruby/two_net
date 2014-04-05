@@ -9,8 +9,8 @@ Gem::Specification.new do |s|
   s.version     = TwoNet::VERSION
   s.authors     = ["Justin Evaniew"]
   s.email       = ["jevaniew@gmail.com"]
-  s.homepage    = "http://github.com"
-  s.summary     = "API Gem to connect to Qualcomm 2Net."
+  s.homepage    = "https://github.com/JustinJruby/two_net"
+  s.summary     = "Connect to Qualcomm 2Net."
   s.description = "Connect to the Qualcomm 2net system. Setup, Register and track users."
 
   s.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.rdoc"]
