@@ -74,10 +74,17 @@ Show the latest data for the track
 
 
 == Latest Activity
-  TwoNet::latest_activity(opts={})
+  TwoNet::Client.latest_activity(opts={})
     guid = opts[:guid]
     track_guid = opts[:track_guid]
     timezone = opts[:timezone]
 Show the latest data for the track
 
-=
+== Filtered Activity
+  TwoNet::Client.filtered_activity(opts={})
+    guid = opts[:guid]
+    track_guid = opts[:track_guid]
+    timezone = opts[:timezone]
+    start_date = opts[:start_date]
+    end_date = opts[:end_date]
+Filter on a date/time
