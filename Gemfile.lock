@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    two_net (0.0.1)
+    two_net (0.1.0)
       builder (= 3.1.4)
       httparty (~> 0.13.0)
       rails (~> 4.0.2)
