@@ -22,37 +22,37 @@ class Client
   	@error = nil
   end
   def self.register_user(guid)
-    response = Client.post('/partner/register', :body=>{:guid=>guid }.to_xml(:root=>:registerRequest))
+    response = TwoNet::Client.post('/partner/register', :body=>{:guid=>guid }.to_xml(:root=>:registerRequest))
     return false if @error = response["errorStatus"].blank? == false
     return  response["trackGuidsResponse"]["status"]["code"] == "1"
   end
 
   def self.delete_user(guid)
-    response = Client.delete("/partner/user/delete/#{guid}")
+    response = TwoNet::Client.delete("/partner/user/delete/#{guid}")
     return false if @error = response["errorStatus"].blank? == false
     return check_status_response response
   end
 
    def self.user_exists?(guid)
-    response = Client.get("/partner/user/exists/#{guid}")
+    response = TwoNet::Client.get("/partner/user/exists/#{guid}")
     return check_status_response response
   end
 
   #return array
   def self.get_guids()
-    audit_response = Client.get('/partner/audit/guids')
+    audit_response = TwoNet::Client.get('/partner/audit/guids')
     return nil if audit_response["auditResponse"]["status"]["code"] != "1"
     return audit_response["auditResponse"]["guids"]["guid"]
   end
 
  def self.user_track_details(guid)
-    response = Client.get("/partner/user/tracks/details/#{guid}")
+    response = TwoNet::Client.get("/partner/user/tracks/details/#{guid}")
     return check_user_track_details_response response
   end
 
 ## TODO clean up the hash that arrives back
   def self.list_all_sensors(guid)
-    response = TwoNet.get("/partner/user/tracks/registerable/#{guid}")
+    response = TwoNet::Client.get("/partner/user/tracks/registerable/#{guid}")
     response["trackRegistrationTemplateResponse"]
   end
 
@@ -71,7 +71,7 @@ class Client
             :type =>"2net",
             :properties => properties,
             "registerType" => "properties" }
-    response = Client.post('/partner/user/track/register',:body=>Client.trackRegistrationRequest_xml(body))
+    response = TwoNet::Client.post('/partner/user/track/register',:body=>TwoNet::Client.trackRegistrationRequest_xml(body))
     return false if @error = response["errorStatus"].blank? == false
     return nil if response["trackRegistrationResponse"]["status"]["code"].to_s != "1"
     return response["trackRegistrationResponse"]["trackDetail"]["guid"]
@@ -83,15 +83,15 @@ class Client
     body = {:guid=>guid,
             :type =>type,
             "registerType" => "oauth" }
-    response = Client.post('/partner/user/track/register',:body=>body.to_xml(:root=>'trackRegistrationRequest'))
+    response = TwoNet::Client.post('/partner/user/track/register',:body=>body.to_xml(:root=>'trackRegistrationRequest'))
     return false if @error = response["errorStatus"].blank? == false
     return nil if response["trackRegistrationResponse"]["status"]["code"].to_s != "1"
     return response["trackRegistrationResponse"]["oauthAuthorizationUrl"]
   end
 
   def self.remove_sensor(guid,track_id)
-    response = Client.delete("/partner/user/track/unregister/#{guid}/#{track_id}")
-    return Client.check_status_response response
+    response = TwoNet::Client.delete("/partner/user/track/unregister/#{guid}/#{track_id}")
+    return TwoNet::Client.check_status_response response
   end
 
   def self.generate_guid()
@@ -101,8 +101,8 @@ class Client
     guid = opts[:guid]
     track_guid = opts[:track_guid]
      #timezone = 'Canada/Atlantic'
-    body = Client.trackRequest_xml(guid: guid, track_guid: track_guid)
-    response = Client.post('/partner/user/track/latest',:body=>body)
+    body = TwoNet::Client.trackRequest_xml(guid: guid, track_guid: track_guid)
+    response = TwoNet::Client.post('/partner/user/track/latest',:body=>body)
   end
 
   def self.latest_activity(opts={})
@@ -111,7 +111,7 @@ class Client
     timezone = opts[:timezone]
      #timezone = 'Canada/Atlantic'
     body = activityRequest_xml(guid: guid,  track_guid: track_guid, timezone: timezone)
-    response = Client.post('/partner/activity/day/latest',:body=>body)
+    response = TwoNet::Client.post('/partner/activity/day/latest',:body=>body)
   end
 
   def self.filtered_activity(opts={})
@@ -121,10 +121,10 @@ class Client
     start_date = opts[:start_date]
     end_date = opts[:end_date]
 
-    body = Client.activityRequestFilter_xml(guid: guid, track_guid: track_guid, 
+    body = TwoNet::Client.activityRequestFilter_xml(guid: guid, track_guid: track_guid, 
                             start_date: start_date.to_i, end_date: end_date.to_i, 
                               timezone: timezone )
-    response = Client.post('/partner/activity/filtered',:body=>body)
+    response = TwoNet::Client.post('/partner/activity/filtered',:body=>body)
   end
 
   def self.latest_blood(opts={})
@@ -132,7 +132,7 @@ class Client
     track_guid = opts[:track_guid]
 
     body = measureRequest_xml(guid: guid, track_guid: track_guid)
-    response = Client.post('/partner/measure/blood/latest',:body=>body)
+    response = TwoNet::Client.post('/partner/measure/blood/latest',:body=>body)
     return nil if @error = response["measureResponse"]["status"]["code"].to_s != "1"
     return response["measureResponse"]
   end
@@ -142,7 +142,7 @@ class Client
     track_guid = opts[:track_guid]
 
     body = measureRequest_xml(guid: guid, track_guid: track_guid)
-    response = Client.post('/partner/measure/breath/latest',:body=>body)
+    response = TwoNet::Client.post('/partner/measure/breath/latest',:body=>body)
     return nil if response["measureResponse"]["status"]["code"].to_s != "1"
     return response["measureResponse"]
   end
@@ -152,8 +152,8 @@ class Client
     track_guid = opts[:track_guid]
     timezone = opts[:timezone]
 
-    body = Client.measureRequest_xml(guid: guid, track_guid: track_guid, timezone: timezone)
-    response = Client.post('/partner/measure/body/latest',:body=>body)
+    body = TwoNet::Client.measureRequest_xml(guid: guid, track_guid: track_guid, timezone: timezone)
+    response = TwoNet::Client.post('/partner/measure/body/latest',:body=>body)
     return nil if @error = response["measureResponse"]["status"]["code"] != "1"
     return response["measureResponse"]
   end
@@ -166,11 +166,11 @@ class Client
     timezone = opts[:timezone]
 
     if measurement == :blood
-      results = Client.latest_blood(guid: patient_guid,track_guid: sensor_guid)
+      results = TwoNet::Client.latest_blood(guid: patient_guid,track_guid: sensor_guid)
     elsif measurement == :body
-      results = Client.latest_body(guid: patient_guid,track_guid: sensor_guid, timezone: timezone)
+      results = TwoNet::Client.latest_body(guid: patient_guid,track_guid: sensor_guid, timezone: timezone)
     elsif measurement == :breath
-      results = Client.latest_breath(guid: patient_guid,track_guid: sensor_guid)
+      results = TwoNet::Client.latest_breath(guid: patient_guid,track_guid: sensor_guid)
     end
   return results
   end
@@ -182,11 +182,11 @@ class Client
     timezone = opts[:timezone]
     results = Hash.new
     
-      results["blood"] = Client.latest_blood(guid: patient_guid,track_guid: sensor_guid)
+      results["blood"] = TwoNet::Client.latest_blood(guid: patient_guid,track_guid: sensor_guid)
     
-      results["body"] = Client.latest_body(guid: patient_guid,track_guid: sensor_guid, timezone: timezone)
+      results["body"] = TwoNet::Client.latest_body(guid: patient_guid,track_guid: sensor_guid, timezone: timezone)
     
-      results["breath"] = Client.latest_breath(guid: patient_guid,track_guid: sensor_guid)
+      results["breath"] = TwoNet::Client.latest_breath(guid: patient_guid,track_guid: sensor_guid)
     
   return results
   end
@@ -199,15 +199,15 @@ class Client
     end_date = opts[:end_date]
     timezone = opts[:timezone]
 
-    body = Client.measureRequest_xml(guid: guid,  track_guid: track_guid, timezone: timezone, start_date: start_date,  end_date: end_date)
+    body = TwoNet::Client.measureRequest_xml(guid: guid,  track_guid: track_guid, timezone: timezone, start_date: start_date,  end_date: end_date)
     if measurement == "blood"
-      response = Client.post('/partner/measure/blood/filtered', :body=>body)
+      response = TwoNet::Client.post('/partner/measure/blood/filtered', :body=>body)
     elsif measurement == "body"
-      response = Client.post('/partner/measure/body/filtered', :body=>body)
+      response = TwoNet::Client.post('/partner/measure/body/filtered', :body=>body)
     elsif measurement == "breath"
-      response = Client.post('/partner/measure/breath/filtered',:body=>body)
+      response = TwoNet::Client.post('/partner/measure/breath/filtered',:body=>body)
     elsif measurement == "activity"
-	 response = Client.post('/partner/measure/activity/filtered',:body=>body)
+	 response = TwoNet::Client.post('/partner/measure/activity/filtered',:body=>body)
     end
 
     return nil if response["measureResponse"]["status"]["code"] != "1"
@@ -223,13 +223,13 @@ class Client
     timezone = opts[:timezone]
 	responses = Hash.new
     
-    body = Client.measureRequest_xml(guid: guid,  track_guid: track_guid, timezone: timezone, start_date: start_date,  end_date: end_date)
+    body = TwoNet::Client.measureRequest_xml(guid: guid,  track_guid: track_guid, timezone: timezone, start_date: start_date,  end_date: end_date)
     
-      responses["blood"] = Client.post('/partner/measure/blood/filtered', :body=>body)
+      responses["blood"] = TwoNet::Client.post('/partner/measure/blood/filtered', :body=>body)
     
-      responses["body"] = Client.post('/partner/measure/body/filtered', :body=>body)
+      responses["body"] = TwoNet::Client.post('/partner/measure/body/filtered', :body=>body)
     
-      responses["breath"] = Client.post('/partner/measure/breath/filtered',:body=>body)
+      responses["breath"] = TwoNet::Client.post('/partner/measure/breath/filtered',:body=>body)
   
    
 
@@ -402,7 +402,7 @@ class Client
             :type =>"2net",
             :properties => properties,
             "registerType" => "properties" }
-    response = Client.post('/partner/user/track/register',:body=>TwoNet.trackRegistrationRequest_xml(body))
+    response = TwoNet::Client.post('/partner/user/track/register',:body=>TwoNet::Client.trackRegistrationRequest_xml(body))
     return false if response["errorStatus"].blank? == false
     return nil if response["trackRegistrationResponse"]["status"]["code"].to_s != "1"
     return response["trackRegistrationResponse"]["trackDetail"]["guid"]
@@ -414,7 +414,7 @@ class Client
 
     track_detail = track_details["trackDetail"]
     return [] if track_detail.blank?
-    track_detail = Client.arrayify(track_detail)
+    track_detail = TwoNet::Client.arrayify(track_detail)
     track_detail.each do |track_detail|
       h[ track_detail["guid"] ] = track_detail["properties"]
     end
@@ -422,11 +422,11 @@ class Client
   end
 
   def print_uid_sensors(guids = nil)
-    guids = Client.get_guids() if guids == nil
-   	guids= Client.arrayify(guids)
+    guids = TwoNet::Client.get_guids() if guids == nil
+   	guids= TwoNet::Client.arrayify(guids)
     h = Hash.new
     guids.each do |guid|
-     results =  Client.user_track_details(guid)
+     results =  TwoNet::Client.user_track_details(guid)
       h[guid] =  compress_track(results)
     end
     return h
