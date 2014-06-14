@@ -50,6 +50,11 @@ class Client
     return check_user_track_details_response response
   end
 
+ def self.user_track_list(guid)
+    response = TwoNet::Client.get("/partner/user/tracks/guids/#{guid}")
+    return check_user_track_details_response response
+  end
+
 ## TODO clean up the hash that arrives back
   def self.list_all_sensors(guid)
     response = TwoNet::Client.get("/partner/user/tracks/registerable/#{guid}")
