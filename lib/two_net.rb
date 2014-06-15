@@ -52,7 +52,7 @@ class Client
 
  def self.user_track_list(guid)
     response = TwoNet::Client.get("/partner/user/tracks/guids/#{guid}")
-    return check_user_track_details_response response
+    return check_user_track_list_response response
   end
 
 ## TODO clean up the hash that arrives back
@@ -259,7 +259,10 @@ class Client
     return nil if response["trackDetailsResponse"]["status"]["code"].to_s != "1"
     return response["trackDetailsResponse"]["trackDetails"]
   end
-
+def self.check_user_track_list_response(response)
+    return false if @error = response["errorStatus"].blank? == false
+    return response["trackGuidsResponse"]
+  end
   def self.trackRegistrationRequest_xml(body)
     builder = Builder::XmlMarkup.new
     xml = builder.trackRegistrationRequest do |xml|
